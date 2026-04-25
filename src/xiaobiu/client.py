@@ -30,60 +30,98 @@ from .models import (
   SignedRequestTemplate,
 )
 
+# 默认登录URL
 DEFAULT_LOGIN_URL = "https://passport.suning.com/ids/login"
+# 默认登录后跳转的目标URL
 DEFAULT_TARGET_URL = "https://www.suning.com/"
+# 默认请求超时时间(秒)
 DEFAULT_TIMEOUT = 20.0
+# 默认PC浏览器User-Agent
 DEFAULT_USER_AGENT = (
   "Mozilla/5.0 (X11; Linux x86_64) "
   "AppleWebKit/537.36 (KHTML, like Gecko) "
   "Chrome/134.0.0.0 Safari/537.36"
 )
+# 默认APP User-Agent
 DEFAULT_APP_USER_AGENT = "SmartHome/6.4.7 (Android; Android 14; Scale/3.00)"
+# 默认APP终端类型
 DEFAULT_APP_TERMINAL_TYPE = "SHCSS_ANDROID"
+# 默认APP接受语言
 DEFAULT_APP_ACCEPT_LANGUAGE = "zh-Hans-US;q=1, zh-Hant-US;q=0.9, en-US;q=0.8, ja-US;q=0.7"
+# APP API GS签名密钥
 APP_API_GS_SIGN_SECRET = "ad71cef5-c46a-48f7-a810-61f4be3a207a"
+# 手机短信登录应用代码
 MOBILE_SMS_LOGIN_APP_CODE = "7b8e1574afdd47a8a14766c4f003cff7"
+# 手机短信登录场景ID
 MOBILE_SMS_LOGIN_SCENE_ID = "PASSPORT_XIAOBIU"
+# 手机短信登录渠道
 MOBILE_SMS_LOGIN_CHANNEL = "MOBILE"
+# 手机短信登录订单渠道
 MOBILE_SMS_LOGIN_ORDER_CHANNEL = "208000201090"
+# 手机短信登录主题
 MOBILE_SMS_LOGIN_THEME = "zn"
+# 手机短信登录应用版本
 MOBILE_SMS_LOGIN_APP_VERSION = "6.4.5"
+# 手机短信登录子模式
 MOBILE_SMS_LOGIN_SUB_MODE = "11"
+# 手机短信登录记住我类型
 MOBILE_SMS_LOGIN_REMEMBER_ME_TYPE = "app"
+# 短信频率限制错误码
 SMS_RATE_LIMIT_ERROR_CODE = "00201"
+# 会员基础信息查询URL
 MEMBER_BASE_INFO_URL = "https://shcss.suning.com/shcss-web/api/member/queryMemberBaseInfo.do"
+# 家庭列表查询URL
 FAMILY_LIST_URL = "https://itapig.suning.com/api/trade/shcss/queryAllFamily"
+# 设备列表查询URL
 DEVICE_LIST_URL = "https://itapig.suning.com/api/trade/shcss/all"
+# OpenSH获取密钥URL
 OPENSH_GET_KEY_URL = "https://opensh.suning.com/shsys-web/cc/api/v3/getKey"
+# APP操作URL
+APP_OPER_URL = "https://itapig.suning.com/api/trade/shsys/appOper"
+# 成功响应代码集合
 SUCCESS_RESPONSE_CODES = {"0", "SUCCESS"}
+# 空调类别ID
 AIR_CONDITIONER_CATEGORY_ID = "0002"
+# 空调名称关键词
 AIR_CONDITIONER_NAME_KEYWORD = "空调"
+# 服务引导URL映射
 SERVICE_BOOTSTRAP_URLS = {
   "shcss": MEMBER_BASE_INFO_URL,
   "itapig": "http://itapig.suning.com/api/trade/shcss/queryAllFamily",
   "opensh": OPENSH_GET_KEY_URL,
 }
 
+# 默认登录页面配置
 DEFAULT_LOGIN_PAGE_CONFIG = LoginPageConfig(
+  # 登录公钥
   login_pbk=(
     "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQComqoAyvbCqO1EGsADwfNTWFQIUbm8"
     "CLdeb9TgjGLcz95mAo204SqTYdSEUxFsOnPfROOTxhkhfjbRxBV4/xjS06Y+kkUdiMG"
     "FtABIxRQHQIh0LrVvEZQs4NrixxcPI+b1bpE0gO/GAFSNWm9ejhZGj7UnqiHphnSJAVQ"
     "Nz2lgowIDAQAB"
   ),
+  # RDSY公钥
   rdsy_key=(
     "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZnlkciI+qxNATzQOOcU8rxtfJxlbj"
     "RKEhoz1WhuAFuCe6ZHEh85UjGiG0FN0oBCKoC4aprTlzNDEr/cU2bzTJELhs9xoU80Um"
     "364GY0zbMr1qnnSouyv0Wb/sgrB/cTDmw8HNiX77mCmX+R4Un/6Xj3BBpm52CHn3RXI9"
     "HeE/xwIDAQAB"
   ),
+  # RDSY应用代码
   rdsy_app_code="9FAD2DDEFE754D604779F7BB8264C80F",
+  # 第一步验证标志
   step_flag="8763EC7BB5D7EEE18EDD1E4BD59A1679",
+  # 第二步验证标志
   step_two_flag="3D58885D2B0CB135703770C03852E8CB",
+  # 第三步验证标志
   step_three_flag="08DD83216388DA0A29B5B3CEE0CC0E6F",
+  # RDSY场景ID
   rdsy_scene_id="PASSPORT",
+  # 香港地区RDSY场景ID
   rdsy_scene_id_yghk="PASSPORT_YGHK",
+  # 渠道
   channel="PC",
+  # 账号检查公钥
   check_account_key=(
     "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOuozMgVH/glMcCOIDKjXP83zDmgi6"
     "hKvwB9VLQG6RWcxm/lNmB/Uq3LGdKUnm+JBFy1GeHA8oNKLFROF/ebzSqr6kOkuSsAZm"
@@ -94,10 +132,15 @@ DEFAULT_LOGIN_PAGE_CONFIG = LoginPageConfig(
 
 
 class SuningError(RuntimeError):
+  """苏宁API错误基类"""
   pass
 
 
 class CaptchaRequiredError(SuningError):
+  """需要验证码错误
+  
+  当需要完成验证码验证时抛出
+  """
   def __init__(self, risk_type: str, message: str, sms_ticket: str | None = None) -> None:
     super().__init__(message)
     self.risk_type = risk_type
@@ -105,21 +148,42 @@ class CaptchaRequiredError(SuningError):
 
 
 class SmsRateLimitedError(SuningError):
+  """短信频率限制错误
+  
+  当短信发送过于频繁时抛出
+  """
   def __init__(self, message: str, *, error_code: str = SMS_RATE_LIMIT_ERROR_CODE) -> None:
     super().__init__(message)
     self.error_code = error_code
 
 
 class AuthenticationError(SuningError):
+  """认证错误
+  
+  当登录认证失败时抛出
+  """
   pass
 
 
 def parse_jsonp_or_json(payload: str) -> dict[str, Any]:
+  """解析JSONP或JSON格式的响应
+  
+  Args:
+    payload: 响应文本
+    
+  Returns:
+    解析后的字典
+    
+  Raises:
+    SuningError: 解析失败时抛出
+  """
   text = payload.strip()
   if not text:
     raise SuningError("empty response")
+  # 如果是纯JSON
   if text[0] == "{":
     return json.loads(text)
+  # 如果是JSONP格式
   match = re.match(r"^[^(]+\((.*)\)\s*;?\s*$", text, re.S)
   if not match:
     raise SuningError(f"unable to parse jsonp payload: {text[:120]!r}")
@@ -127,14 +191,24 @@ def parse_jsonp_or_json(payload: str) -> dict[str, Any]:
 
 
 def _extract_business_error_code(*values: Any) -> str | None:
+  """从多个值中提取业务错误码
+  
+  Args:
+    *values: 可能包含错误码的多个值
+    
+  Returns:
+    提取到的5位错误码，如果没有则返回None
+  """
   for value in values:
     if value is None:
       continue
     text = str(value).strip()
     if not text:
       continue
+    # 匹配纯5位数字
     if re.fullmatch(r"\d{5}", text):
       return text
+    # 匹配末尾的(XXXXX)格式
     match = re.search(r"\((\d{5})\)\s*$", text)
     if match:
       return match.group(1)
@@ -142,7 +216,19 @@ def _extract_business_error_code(*values: Any) -> str | None:
 
 
 def parse_login_page_config(html: str) -> LoginPageConfig:
+  """从登录页面HTML中提取配置信息
+  
+  Args:
+    html: 登录页面的HTML内容
+    
+  Returns:
+    登录页面配置对象
+    
+  Raises:
+    SuningError: 提取失败时抛出
+  """
   def extract(pattern: str, name: str) -> str:
+    """使用正则表达式提取配置项"""
     match = re.search(pattern, html, re.S)
     if not match:
       raise SuningError(f"missing {name} in login page")
@@ -164,6 +250,14 @@ def parse_login_page_config(html: str) -> LoginPageConfig:
 
 
 def extract_risk_context_script_urls(html_text: str) -> list[str]:
+  """从HTML中提取风控上下文脚本URL
+  
+  Args:
+    html_text: HTML文本内容
+    
+  Returns:
+    提取到的脚本URL列表
+  """
   patterns = [
     r'<script[^>]+src="(https://mmds\.suning\.com/mmds/mmds\.js[^"]+)"',
     r'<script[^>]+src="(https://oss\.suning\.com/mmds/mmds/js/[^"]+\.js)"',
@@ -181,11 +275,30 @@ def extract_risk_context_script_urls(html_text: str) -> list[str]:
 
 
 def _normalize_url(url: str) -> str:
+  """标准化URL，移除查询参数和片段
+  
+  Args:
+    url: 原始URL
+    
+  Returns:
+    标准化后的URL
+  """
   parts = urlsplit(url)
   return f"{parts.scheme}://{parts.netloc}{parts.path}"
 
 
 def _canonicalize_request_body(raw_body: str | None, content_type: str | None = None) -> str:
+  """规范化请求体
+  
+  对于JSON请求体，会重新序列化以移除不必要的空格
+  
+  Args:
+    raw_body: 原始请求体
+    content_type: 内容类型
+    
+  Returns:
+    规范化后的请求体
+  """
   if not raw_body:
     return ""
   body = raw_body.strip()
@@ -198,12 +311,32 @@ def _canonicalize_request_body(raw_body: str | None, content_type: str | None = 
 
 
 def _build_gs_sign_payload(url_path: str, request_time: int | str, body: str | None) -> str:
+  """构建GS签名的载荷
+  
+  Args:
+    url_path: URL路径
+    request_time: 请求时间戳
+    body: 请求体
+    
+  Returns:
+    签名载荷字符串
+  """
   canonical_body = _canonicalize_request_body(body, "application/json")
   payload = f"url={url_path}&requestTime={request_time}&data={canonical_body}"
   return payload.replace(" ", "").replace("\n", "").replace("\r", "")
 
 
 def _build_gs_sign(url_path: str, request_time: int | str, body: str | None) -> str:
+  """构建GS签名
+  
+  Args:
+    url_path: URL路径
+    request_time: 请求时间戳
+    body: 请求体
+    
+  Returns:
+    签名字符串
+  """
   payload = _build_gs_sign_payload(url_path, request_time, body)
   return hmac.new(
     APP_API_GS_SIGN_SECRET.encode("utf-8"),
@@ -213,6 +346,14 @@ def _build_gs_sign(url_path: str, request_time: int | str, body: str | None) -> 
 
 
 def _decode_har_content(content: dict[str, Any]) -> str:
+  """解码HAR文件中的内容
+  
+  Args:
+    content: HAR内容对象
+    
+  Returns:
+    解码后的文本
+  """
   text = content.get("text") or ""
   if content.get("encoding") == "base64":
     return base64.b64decode(text).decode("utf-8", "replace")
@@ -220,6 +361,14 @@ def _decode_har_content(content: dict[str, Any]) -> str:
 
 
 def _extract_har_headers(entry: dict[str, Any]) -> dict[str, str]:
+  """从HAR条目中提取请求头
+  
+  Args:
+    entry: HAR条目
+    
+  Returns:
+    请求头字典
+  """
   return {
     item["name"]: item["value"]
     for item in entry.get("request", {}).get("headers", [])
@@ -228,6 +377,14 @@ def _extract_har_headers(entry: dict[str, Any]) -> dict[str, str]:
 
 
 def _har_response_payload(entry: dict[str, Any]) -> dict[str, Any] | None:
+  """从HAR条目中提取响应数据
+  
+  Args:
+    entry: HAR条目
+    
+  Returns:
+    解析后的响应数据，如果解析失败则返回None
+  """
   content = entry.get("response", {}).get("content") or {}
   text = _decode_har_content(content).strip()
   if not text:
@@ -239,6 +396,14 @@ def _har_response_payload(entry: dict[str, Any]) -> dict[str, Any] | None:
 
 
 def _har_entry_is_success(entry: dict[str, Any]) -> bool:
+  """判断HAR条目是否表示成功的请求
+  
+  Args:
+    entry: HAR条目
+    
+  Returns:
+    如果请求成功则返回True，否则返回False
+  """
   if entry.get("response", {}).get("status") != 200:
     return False
   payload = _har_response_payload(entry)
@@ -248,10 +413,28 @@ def _har_entry_is_success(entry: dict[str, Any]) -> bool:
 
 
 def _template_key(method: str, url: str, body: str) -> tuple[str, str, str]:
+  """生成请求模板的键
+  
+  Args:
+    method: HTTP方法
+    url: URL
+    body: 请求体
+    
+  Returns:
+    模板键元组
+  """
   return (method.upper(), _normalize_url(url), body)
 
 
 def _coalesce(*values: Any) -> Any:
+  """返回第一个非空值
+  
+  Args:
+    *values: 要检查的多个值
+    
+  Returns:
+    第一个非空值，如果所有值都为空则返回None
+  """
   for value in values:
     if value is None:
       continue
@@ -262,6 +445,14 @@ def _coalesce(*values: Any) -> Any:
 
 
 def _parse_bool_flag(value: Any) -> bool | None:
+  """解析布尔值标志
+  
+  Args:
+    value: 要解析的值
+    
+  Returns:
+    解析后的布尔值，如果无法解析则返回None
+  """
   normalized = str(value).strip().lower()
   if not normalized:
     return None
@@ -273,6 +464,14 @@ def _parse_bool_flag(value: Any) -> bool | None:
 
 
 def _parse_float_value(value: Any) -> float | None:
+  """解析浮点数值
+  
+  Args:
+    value: 要解析的值
+    
+  Returns:
+    解析后的浮点数，如果无法解析则返回None
+  """
   if value is None:
     return None
   normalized = str(value).strip()
@@ -285,6 +484,14 @@ def _parse_float_value(value: Any) -> float | None:
 
 
 def _strip_html_text(value: Any) -> str | None:
+  """移除HTML标签并解码HTML实体
+  
+  Args:
+    value: 要处理的值
+    
+  Returns:
+    处理后的纯文本，如果输入为None则返回None
+  """
   if value is None:
     return None
   text = html.unescape(str(value))
@@ -294,6 +501,15 @@ def _strip_html_text(value: Any) -> str | None:
 
 
 def _infer_swing_mode(horizontal: bool | None, vertical: bool | None) -> str | None:
+  """从水平和垂直摆风状态推断摆风模式
+  
+  Args:
+    horizontal: 水平摆风状态
+    vertical: 垂直摆风状态
+    
+  Returns:
+    摆风模式字符串(both/horizontal/vertical/off)，如果无法推断则返回None
+  """
   if horizontal is True and vertical is True:
     return "both"
   if horizontal is True:
@@ -306,6 +522,14 @@ def _infer_swing_mode(horizontal: bool | None, vertical: bool | None) -> str | N
 
 
 def _serialize_cookie(cookie: Any) -> SerializedCookie:
+  """序列化Cookie对象
+  
+  Args:
+    cookie: Cookie对象
+    
+  Returns:
+    序列化后的Cookie对象
+  """
   return SerializedCookie(
     name=cookie.name,
     value=cookie.value,
@@ -318,6 +542,14 @@ def _serialize_cookie(cookie: Any) -> SerializedCookie:
 
 
 def _restore_cookie(serialized_cookie: SerializedCookie) -> Any:
+  """从序列化的Cookie对象恢复Cookie
+  
+  Args:
+    serialized_cookie: 序列化的Cookie对象
+    
+  Returns:
+    恢复后的Cookie对象
+  """
   return create_cookie(
     name=serialized_cookie.name,
     value=serialized_cookie.value,
@@ -889,6 +1121,78 @@ class SuningSmartHomeClient:
     return {
       "member": member_info,
     }
+
+  def control_air_conditioner(
+    self,
+    device_id: str,
+    model_id: str,
+    cmd: dict[str, str],
+  ) -> dict[str, Any]:
+    """控制空调设备
+    
+    Args:
+      device_id: 设备ID
+      model_id: 设备型号ID
+      cmd: 控制命令字典，例如 {"SN_POWER": "1"} 或 {"SN_TEMPERATURE": "26.0"}
+      
+    Returns:
+      API响应数据
+    """
+    request_body = json.dumps(
+      {
+        "modelId": model_id,
+        "cmd": json.dumps(cmd, separators=(",", ":"), ensure_ascii=False),
+        "deviceId": device_id,
+      },
+      separators=(",", ":"),
+      ensure_ascii=False,
+    )
+    response = self._request_app_api(APP_OPER_URL, body=request_body)
+    return self._decode_app_api_response(response, action="控制空调")
+
+  def set_air_conditioner_power(
+    self,
+    device_id: str,
+    model_id: str,
+    power_on: bool,
+  ) -> dict[str, Any]:
+    """设置空调电源状态
+    
+    Args:
+      device_id: 设备ID
+      model_id: 设备型号ID
+      power_on: True为开机，False为关机
+      
+    Returns:
+      API响应数据
+    """
+    return self.control_air_conditioner(
+      device_id=device_id,
+      model_id=model_id,
+      cmd={"SN_POWER": "1" if power_on else "0"},
+    )
+
+  def set_air_conditioner_temperature(
+    self,
+    device_id: str,
+    model_id: str,
+    temperature: float,
+  ) -> dict[str, Any]:
+    """设置空调温度
+    
+    Args:
+      device_id: 设备ID
+      model_id: 设备型号ID
+      temperature: 目标温度
+      
+    Returns:
+      API响应数据
+    """
+    return self.control_air_conditioner(
+      device_id=device_id,
+      model_id=model_id,
+      cmd={"SN_TEMPERATURE": str(temperature)},
+    )
 
   def save_state(self) -> None:
     if not self.state_path:

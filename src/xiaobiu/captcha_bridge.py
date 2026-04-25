@@ -8,6 +8,8 @@ from typing import Any
 
 from .models import CaptchaBridgeResult
 
+# 默认的风控上下文脚本URL列表
+# 这些脚本用于在浏览器中收集设备指纹和风控信息
 DEFAULT_RISK_CONTEXT_SCRIPT_URLS = [
   "https://mmds.suning.com/mmds/mmds.js?appCode=qEmt9X4YmoV2Vye8",
   "https://oss.suning.com/mmds/mmds/js/sK1di3Hh1vIKsdA/mmds.XsWjliU4H7uskWk.js",
@@ -295,6 +297,17 @@ def render_captcha_page(
   script_urls: list[str] | None = None,
   callback_url: str = "/callback",
 ) -> str:
+  """渲染验证码页面
+  
+  Args:
+    ticket: 验证码票据
+    env: 环境标识，默认为生产环境(prd)
+    script_urls: 风控脚本URL列表，默认使用DEFAULT_RISK_CONTEXT_SCRIPT_URLS
+    callback_url: 验证完成后的回调URL
+    
+  Returns:
+    渲染后的HTML页面内容
+  """
   return HTML_TEMPLATE.format(
     env=env,
     ticket=ticket,
@@ -306,10 +319,19 @@ def render_captcha_page(
   )
 
 class _ThreadedHTTPServer(ThreadingHTTPServer):
+  """线程化HTTP服务器
+  
+  继承自ThreadingHTTPServer，设置daemon_threads=True使所有线程为守护线程
+  """
   daemon_threads = True
 
 
 class LocalCaptchaBridge:
+  """本地验证码桥接服务器
+  
+  创建一个本地HTTP服务器，用于显示苏宁验证码页面，并接收验证完成后的结果
+  """
+  
   def __init__(
     self,
     *,
@@ -319,47 +341,91 @@ class LocalCaptchaBridge:
     port: int = 0,
     script_urls: list[str] | None = None,
   ) -> None:
+    """初始化验证码桥接服务器
+    
+    Args:
+      ticket: 验证码票据
+      env: 环境标识，默认为生产环境(prd)
+      host: 服务器监听地址，默认为本地回环地址
+      port: 服务器监听端口，0表示自动分配
+      script_urls: 风控脚本URL列表
+    """
     self.ticket = ticket
     self.env = env
     self.host = host
     self.port = port
     self.script_urls = script_urls or DEFAULT_RISK_CONTEXT_SCRIPT_URLS
+    # 验证码结果
     self._result: CaptchaBridgeResult | None = None
+    # 用于等待验证完成的事件
     self._event = threading.Event()
+    # 创建HTTP服务器
     self._server = self._create_server()
+    # 创建服务器线程
     self._thread = threading.Thread(target=self._server.serve_forever, daemon=True)
 
   @property
   def url(self) -> str:
+    """获取服务器URL
+    
+    Returns:
+      服务器的完整URL
+    """
     host, port = self._server.server_address[:2]
     return f"http://{host}:{port}/"
 
   def start(self) -> None:
+    """启动验证码桥接服务器"""
     self._thread.start()
 
   def wait_for_token(self, timeout: float = 300.0) -> CaptchaBridgeResult:
+    """等待验证码结果
+    
+    Args:
+      timeout: 超时时间(秒)
+      
+    Returns:
+      验证码结果
+      
+    Raises:
+      TimeoutError: 等待超时
+    """
     completed = self._event.wait(timeout)
     if not completed or not self._result:
       raise TimeoutError("等待验证码结果超时")
     return self._result
 
   def close(self) -> None:
+    """关闭验证码桥接服务器"""
     self._server.shutdown()
     self._server.server_close()
     if self._thread.is_alive():
       self._thread.join(timeout=1.0)
 
   def _create_server(self) -> _ThreadedHTTPServer:
+    """创建HTTP服务器
+    
+    Returns:
+      配置好的HTTP服务器实例
+    """
     bridge = self
 
     class Handler(BaseHTTPRequestHandler):
+      """HTTP请求处理器
+      
+      处理验证码页面的显示和验证结果的回调
+      """
+      
       def log_message(self, format: str, *args: Any) -> None:
+        """禁用日志输出"""
         return
 
       def do_GET(self) -> None:
+        """处理GET请求，返回验证码页面"""
         if self.path != "/":
           self.send_error(HTTPStatus.NOT_FOUND)
           return
+        # 渲染验证码页面
         html = render_captcha_page(
           env=bridge.env,
           script_urls=bridge.script_urls,
@@ -374,27 +440,33 @@ class LocalCaptchaBridge:
         self.wfile.write(body)
 
       def do_POST(self) -> None:
+        """处理POST请求，接收验证码结果"""
         if self.path != "/callback":
           self.send_error(HTTPStatus.NOT_FOUND)
           return
+        # 读取请求体
         length = int(self.headers.get("Content-Length", "0"))
         raw_body = self.rfile.read(length)
         payload = json.loads(raw_body.decode("utf-8"))
+        # 提取验证结果
         token = (payload.get("token") or "").strip()
         detect = (payload.get("detect") or "").strip()
         dfp_token = (payload.get("dfpToken") or "").strip()
+        # 验证必要字段
         if not token:
           self.send_error(HTTPStatus.BAD_REQUEST, "missing token")
           return
         if not detect or not dfp_token:
           self.send_error(HTTPStatus.BAD_REQUEST, "missing risk context")
           return
+        # 保存验证结果并触发事件
         bridge._result = CaptchaBridgeResult(
           token=token,
           detect=detect,
           dfp_token=dfp_token,
         )
         bridge._event.set()
+        # 返回成功响应
         body = json.dumps({"ok": True}).encode("utf-8")
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-Type", "application/json; charset=utf-8")
