@@ -2,18 +2,15 @@ name: Publish to PyPI
 
 on:
   push:
-    branches: [ "main"]  # 当 push 到 main/master 分支时触发
+    branches: [ "main" ]
 
 permissions:
   contents: read
-  id-token: write  # 用于 Trusted Publishing
+  id-token: write  # Trusted Publishing 必需
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    environment:
-      name: pypi  # 环境名称，需要在 GitHub 仓库设置中配置
-      url: https://pypi.org/project/python-xiaobiu
     steps:
       - uses: actions/checkout@v4
 
@@ -31,3 +28,4 @@ jobs:
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        # 关键：不要加 with 块，让 Action 自动使用 OIDC

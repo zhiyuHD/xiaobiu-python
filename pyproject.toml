@@ -1,5 +1,5 @@
 [project]
-name = "python-xiaobiu"
+name = "xiaobiu-python"
 version = "0.0.1"
 description = "Suning biu smart home SMS login and session client"
 readme = "README.md"
@@ -23,8 +23,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/FaintGhost/python-xiaobiu"
-"Bug Tracker" = "https://github.com/FaintGhost/python-xiaobiu/issues"
+Homepage = "https://github.com/zhiyuHD/xiaobiu-python"
+"Bug Tracker" = "https://github.com/zhiyuHD/xiaobiu-python/issues"
 
 [project.scripts]
 xiaobiucli = "xiaobiu:main"
