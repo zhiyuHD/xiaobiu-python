@@ -1,11 +1,12 @@
 [project]
 name = "python-xiaobiu"
-version = "0.1.1"
+version = "0.0.1"
 description = "Suning biu smart home SMS login and session client"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [
-  { name = "FaintGhost", email = "zhang.yaowei@live.com" }
+  { name = "FaintGhost", email = "zhang.yaowei@live.com" },
+  { name = "zhiyuHD", email = "zhiyuxl@outlook.com"}
 ]
 keywords = ["suning", "smart-home", "home-assistant", "climate"]
 classifiers = [
